@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@material-ui/core/";
-import axios from "axios";
 import PostCards from "./postCards";
+import http from "../services/axiosConfig";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const getPosts = async () => {
-      await axios.get("http://localhost:5000/allPosts").then((data) => {
-        // console.log(data.data.posts);
-        setPosts(data.data.posts);
-      });
+      await http
+        .get("/allPosts")
+        .then((data) => {
+          setPosts(data.data.posts);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     };
     getPosts();
   }, []);

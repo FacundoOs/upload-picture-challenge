@@ -4,12 +4,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const PostsCard = ({ posts }) => {
   const classes = useStyles();
-  // console.log(posts);
 
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <CardMedia className={classes.media} image={posts.image} title="Contemplative Reptile" />
+        <CardMedia className={classes.media} image={posts.image} title={posts.title} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {posts.title}
@@ -35,5 +34,8 @@ const useStyles = makeStyles({
   },
   media: {
     height: 340,
+    "@media (max-width:640px)": {
+      height: 200,
+    },
   },
 });

@@ -5,20 +5,21 @@ const Post = mongoose.model("Post");
 
 router.get("/allPosts", (req, res) => {
   Post.find()
+    .sort({ date: -1 })
     .then((posts) => {
-      res.json({ posts });
+      res.status(200).json({ posts });
     })
     .catch((err) => {
       console.log(err);
+      res.status(400).json("Error: " + err);
     });
 });
 
 router.post("/create-post", (req, res) => {
-  console.log(req.body)
   const { title, body, image } = req.body;
 
   if (!title || !body || !image) {
-     res.status(422).json({ message: "Please add all the fields" });
+    res.status(400).send({ message: "Please add all the fields" });
   }
 
   const post = new Post({
@@ -33,8 +34,7 @@ router.post("/create-post", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(400).json({ message: err });
-
+      res.status(500).send({ message: "Try again" });
     });
 });
 

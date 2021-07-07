@@ -4,7 +4,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import { Box, Button, Grid, Typography, TextField } from "@material-ui/core";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import SaveIcon from "@material-ui/icons/Save";
-import axios from "axios";
+import http from "../services/axiosConfig";
 
 const CreatePost = () => {
   const classes = useStyle();
@@ -16,10 +16,6 @@ const CreatePost = () => {
     isError: false,
     imageInfos: [],
   });
-
-  useEffect(() => {
-    // console.log(data.currentFile);
-  }, [data]);
 
   const selectFile = (event) => {
     setData((prevState) => ({
@@ -47,9 +43,6 @@ const CreatePost = () => {
     formData.append("cloud_name", "jfotest");
 
     const options = {
-      headers: {
-        "Content-Type": "application/json",
-      },
       onUploadProgress: (progressEvent) => {
         const { loaded, total } = progressEvent;
         let percent = Math.floor((loaded * 100) / total);
@@ -64,16 +57,10 @@ const CreatePost = () => {
       },
     };
 
-    const config = {
-      onUploadProgress: (progressEvent) => console.log(progressEvent.loaded),
-    };
-
-    // console.log(title, body);
-    await axios
+    await http
       .post("https://api.cloudinary.com/v1_1/jfotest/image/upload", formData)
       .then(async (data) => {
-        console.log(data.data.url);
-        await axios
+        await http
           .post(
             "http://localhost:5000/create-post",
             {
@@ -84,18 +71,17 @@ const CreatePost = () => {
             options
           )
           .then((data) => {
-            console.log(data);
             setData((prevState) => ({
               ...prevState,
               message: data.data.message,
             }));
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            console.log(error.response.data.message);
           });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
       });
   };
 
