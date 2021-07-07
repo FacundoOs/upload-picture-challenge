@@ -31,7 +31,7 @@ const CreatePost = () => {
     }));
   };
 
-  const upload = (e) => {
+  const upload = async (e) => {
     e.preventDefault();
     const title = e.target.title.value;
     const body = e.target.body.value;
@@ -46,15 +46,51 @@ const CreatePost = () => {
     formData.append("upload_preset", "instagram-post");
     formData.append("cloud_name", "jfotest");
 
+    const options = {
+      onUploadProgress: (progressEvent) => {
+        const { loaded, total } = progressEvent;
+        let percent = Math.floor((loaded * 100) / total);
+        console.log(`Progress: ${percent}%`);
+
+        if (percent < 100) {
+          setData((prevState) => ({
+            ...prevState,
+            progress: percent,
+          }));
+        }
+      },
+    };
+
     console.log(title, body);
-    axios
-      .post("	https://api.cloudinary.com/v1_1/jfotest/image/upload", formData)
-      .then((data) => {
-        setData((prevState) => ({
-          ...prevState,
-          currentFile: data.data.url,
-        }));
+    await axios
+      .post("https://api.cloudinary.com/v1_1/jfotest/image/upload", formData)
+      .then(async (data) => {
         console.log(data.data.url);
+        await axios
+          .post(
+            "http://localhost:5000/create-post",
+            {
+              title,
+              body,
+              image: data.data.url,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+            options
+          )
+          .then((data) => {
+            console.log(data);
+            setData((prevState) => ({
+              ...prevState,
+              message: data.data.message,
+            }));
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);

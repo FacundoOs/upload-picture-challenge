@@ -21,6 +21,11 @@ mongoose.connection.on("error", (err) => {
   console.log("Connection error", err);
 });
 
+
+require("./models/post")
+
+app.use(require("./routes/post"))
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
