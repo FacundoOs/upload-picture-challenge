@@ -42,24 +42,19 @@ const CreatePost = () => {
     }));
 
     const formData = new FormData();
-
-    formData.append("title", title);
-    formData.append("body", body);
-    formData.append("image", data.currentFile);
+    formData.append("file", data.currentFile);
+    formData.append("upload_preset", "instagram-post");
+    formData.append("cloud_name", "jfotest");
 
     console.log(title, body);
-    // setData((prevState) => ({
-    //   ...prevState,
-    //   imageInfos: formData,
-    // }))
     axios
-      .post("http://localhost:8080/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        console.log(res);
+      .post("	https://api.cloudinary.com/v1_1/jfotest/image/upload", formData)
+      .then((data) => {
+        setData((prevState) => ({
+          ...prevState,
+          currentFile: data.data.url,
+        }));
+        console.log(data.data.url);
       })
       .catch((err) => {
         console.log(err);
