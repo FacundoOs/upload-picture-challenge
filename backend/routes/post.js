@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Post = mongoose.model("Post");
 
-router.get("/allPost", (req, res) => {
+router.get("/allPosts", (req, res) => {
   Post.find()
     .then((posts) => {
       res.json({ posts });

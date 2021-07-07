@@ -18,7 +18,7 @@ const CreatePost = () => {
   });
 
   useEffect(() => {
-    console.log(data.currentFile);
+    // console.log(data.currentFile);
   }, [data]);
 
   const selectFile = (event) => {
@@ -47,12 +47,15 @@ const CreatePost = () => {
     formData.append("cloud_name", "jfotest");
 
     const options = {
+      headers: {
+        "Content-Type": "application/json",
+      },
       onUploadProgress: (progressEvent) => {
         const { loaded, total } = progressEvent;
         let percent = Math.floor((loaded * 100) / total);
         console.log(`Progress: ${percent}%`);
 
-        if (percent < 100) {
+        if (percent <= 100) {
           setData((prevState) => ({
             ...prevState,
             progress: percent,
@@ -61,7 +64,11 @@ const CreatePost = () => {
       },
     };
 
-    console.log(title, body);
+    const config = {
+      onUploadProgress: (progressEvent) => console.log(progressEvent.loaded),
+    };
+
+    // console.log(title, body);
     await axios
       .post("https://api.cloudinary.com/v1_1/jfotest/image/upload", formData)
       .then(async (data) => {
@@ -73,11 +80,6 @@ const CreatePost = () => {
               title,
               body,
               image: data.data.url,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
             },
             options
           )
